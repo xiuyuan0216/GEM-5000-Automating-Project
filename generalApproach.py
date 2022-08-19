@@ -436,7 +436,7 @@ def DelaminationCheck():
         print("Delamination Not Detected.")
 
 
-# Collects the needed information for the StickySolenoidCheck from the Dataframes. test
+# Collects the needed information for the StickySolenoidCheck from the Dataframes. test test
 def StickySolenoidCollect():
     SensorDF = DataFrames["Sensor"]
 
