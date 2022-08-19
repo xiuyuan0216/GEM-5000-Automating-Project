@@ -27,14 +27,13 @@ import matplotlib.pyplot as plt
 # CartDict holds the information that each check function needs to determine if a certain failure occurred.
 # This information is collected from the processed DataFrames of each .csv file.
 CartDict = {"General": dict(), "Leaks": dict(), "Peroxide Exposure": dict(), "Sticky Solenoid": dict(),
-            "Bubbles on Sensor": dict()}
+            "Bubbles on Sensor": dict(), "Delamination": dict()}
 
 # DataFrames holds the pandas dataframe version of the .csv files, where the key is the file name and the key is the
 # processed dataframe from the parsing functions.
 DataFrames = {"Sensor": dict(), "Event Log": dict(), "Cartridge": dict()}
 
 Medians = {}
-
 
 
 # I don't even remember why this naming convention exists. Allows us to access the needed .csv files when just
@@ -356,7 +355,7 @@ def LeakCheck():
             Outliers["ClBDriftOutliers"] += 1
 
     for sensor in Outliers:
-        print(str(sensor) + " " + str(Outliers[sensor]))
+        # print(str(sensor) + " " + str(Outliers[sensor]))
         if Outliers[sensor] > SensorOutlierTrigger:
             SensorFailures += 1
 
@@ -383,20 +382,27 @@ def DelaminationCollect():
     AmVDataFrame = AmVDataFrame.drop(labels=0, axis=0)
 
     TotalSeconds = SensorDF.iloc[:, 0]
-    TotalSecondsDataFrame = TotalSeconds.reset_index(drop=True)
-    TotalSecondsDataFrame = TotalSecondsDataFrame.drop(labels=0, axis=0)
-    TotalSecondsTest = pd.DataFrame()
+    TotalSecondsSeries = TotalSeconds.reset_index(drop=True)
+    TotalSecondsSeries = TotalSecondsSeries.drop(labels=0, axis=0)
 
-    for index, row in TotalSecondsDataFrame.iteritems():
+    TotalSecondsInitial = TotalSecondsSeries.iloc[0]
+    TotalSecondsInitial = TotalSecondsInitial[1:-5]
+    TotalSecondsInitial = datetime.strptime(TotalSecondsInitial, "%m/%d/%y %H:%M:%S")
+    TotalSecondsInitial = TotalSecondsInitial.timestamp()
+
+    # very slow, pls fix (pandas has datetime objects, look into pandas built in functions
+    # (pandas time delta)
+    for index, row in TotalSecondsSeries.iteritems():
         PreDate = row[:][1:-5]
-        row[:] = datetime.strptime(PreDate, "%m/%d/%y %H:%M:%S")
-        # TotalSecondsTest.append(Date)
+        Date = datetime.strptime(PreDate, "%m/%d/%y %H:%M:%S")
+        TotalSecs = Date.timestamp() - TotalSecondsInitial
+        TotalSecondsSeries = TotalSecondsSeries.replace(row, TotalSecs)
 
-    # TotalSecondsDataFrame = TotalSecondsTest.dt.total_seconds()
+    # print(TotalSecondsSeries)
 
     CartDict["Delamination"]["AmV"] = AmVDataFrame
     CartDict["Delamination"]["BmV"] = BmVDataFrame
-    CartDict["Delamination"]["Total Seconds"] = TotalSecondsDataFrame
+    CartDict["Delamination"]["Total Seconds"] = TotalSecondsSeries
 
 
 def DelaminationCheck():
@@ -414,16 +420,16 @@ def DelaminationCheck():
     LastFiveAmVPrior = pd.DataFrame()
     LastTenBmVPrior = pd.DataFrame()
 
-    if CartAge >= 500 * 60 * 60 :
+    if CartAge >= 500 * 60 * 60:
         PriorTwentyPercent = 400 * 60 * 60
     else:
         PriorTwentyPercent = CartAge * 0.8
 
-    for (AmV, row1), (TotalSeconds, row2) in zip(AmV.iterrows(), TotalSeconds.iterrows()):
+    for (AmV, row1), (TotalSeconds, row2) in zip(AmV.iteritems(), TotalSeconds.iteritems()):
         if len(LastFiveAmVPrior) != 5 and row2[:] >= PriorTwentyPercent:
             LastFiveAmVPrior.append(row1[:])
 
-    for (BmV, row1), (TotalSeconds, row2) in zip(BmV.iterrows(), TotalSeconds.iterrows()):
+    for (BmV, row1), (TotalSeconds, row2) in zip(BmV.iteritems(), TotalSeconds.iteritems()):
         if len(LastTenBmVPrior) != 10 and row2[:] >= PriorTwentyPercent:
             LastTenBmVPrior.append(row1[:])
 
@@ -436,7 +442,7 @@ def DelaminationCheck():
         print("Delamination Not Detected.")
 
 
-# Collects the needed information for the StickySolenoidCheck from the Dataframes. test test
+# Collects the needed information for the StickySolenoidCheck from the Dataframes.
 def StickySolenoidCollect():
     SensorDF = DataFrames["Sensor"]
 
