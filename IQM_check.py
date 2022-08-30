@@ -6,13 +6,13 @@ import seaborn as sns
 
 def IQMcheck(sensor_file_path, event_log_path):
 
-    with open("limit_bound.json",'r') as file1:
+    with open("json/limit_bound.json",'r') as file1:
         limit_bound = json.load(file1)
 
-    with open("mapping.json",'r') as file2:
+    with open("json/mapping.json",'r') as file2:
         mapping = json.load(file2)
 
-    with open("slope_bound.json",'r') as file3:
+    with open("json/slope_bound.json",'r') as file3:
         slope_bound = json.load(file3)
 
     sensor_file = pd.read_csv(sensor_file_path)

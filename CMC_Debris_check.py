@@ -6,7 +6,6 @@ def CMCDebrisCheck(path):
     data = pd.read_csv(path)
 
     # if the first row is not the header, search and set the correct header
-    \
 
     # select A-COOx in CalType, extract cartAge and tHbMeas from the table
     relavant_data = data[data["'CalType'"]=='A-COOx']

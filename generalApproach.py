@@ -46,9 +46,9 @@ CopyILDirectory = ''
 SensorErrorMessages = []
 
 # Accesses Ronnie's json files so that we can output error code reasoning in read only mode.
-with open("error_code.json", 'r') as file:
+with open("json/error_code.json", 'r') as file:
     file_dict = json.load(file)
-with open("error_reason.json", 'r') as f:
+with open("json/error_reason.json", 'r') as f:
     file_reason = json.load(f)
 
 
