@@ -5,7 +5,7 @@ from collections import deque
 
 
 # Collects the needed information for the PeroxideExposureCheck from the Dataframes.
-def PeroxideExposureCollect(DataFrames):
+def Peroxide_Exposure_Collect(DataFrames, CartDict):
     SensorDF = DataFrames["Sensor"]
 
     # Creates new condensed dataframe and stores into CartDict.
@@ -26,7 +26,7 @@ def PeroxideExposureCollect(DataFrames):
 # 1. Glucose B drift greater than 6 or Glucose B drift is incalculable.
 # 2. Lactate B drift greater than 0.3 or Lactate B drift is incalculable.
 # 3. Creatine and Creatinine BmV less than or equal to -15.
-def PeroxideExposureCheck():
+def PeroxideExposureCheck(Dataframes, CartDict):
     detected = False
     RollingQueue = deque()
 

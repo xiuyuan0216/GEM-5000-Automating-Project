@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import seaborn as sns
 
-def IQMcheck(sensor_file_path, event_log_path):
+def IQM_check(sensor_file_path, event_log_path):
 
     with open("json/limit_bound.json",'r') as file1:
         limit_bound = json.load(file1)
@@ -136,5 +136,5 @@ def IQMcheck(sensor_file_path, event_log_path):
             
 sensor_file_path = "\\\sysdatprod1\\Cartridge Complaint Data\\GEM5000\\16040283\\000000000500192713\\000000000500192713_20210904_064939\\SENSOR.csv"
 event_log_path = "\\\sysdatprod1\\Cartridge Complaint Data\\GEM5000\\16040283\\000000000500192713\\000000000500192713_20210904_064939\\EVENT_LOG.csv"
-IQMcheck(sensor_file_path, event_log_path)
+IQM_check(sensor_file_path, event_log_path)
     
