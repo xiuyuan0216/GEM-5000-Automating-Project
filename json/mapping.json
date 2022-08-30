@@ -1,0 +1,20 @@
+{
+    "HCT":"Hct",
+    "NA+":"Na",
+    "K+":"K",
+    "CA++":"Ca",
+    "BUN":"BUN",
+    "CL-":"Cl",
+    "PO2":"pO2",
+    "PH":"pH",
+    "HCO3":"HCO3",
+    "CREA":"Crea",
+    "CR":"Cr",
+    "LAC":"Lac",
+    "GLU":"Glu",
+    "PCO2":"pCO2",
+    "O2HB":"O2Hb",
+    "COHB":"COHb",
+    "METHB":"MetHb",
+    "HHB":"HHb"
+}
