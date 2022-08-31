@@ -14,9 +14,11 @@ def Error_code_extract(event_log_relavant, SerialNo):
                 cartErrorCode = messageSplit[2]
                 cartErrorCode = cartErrorCode.rstrip(cartErrorCode[-1])
                 cartErrorCode = int(cartErrorCode)
+                return cartErrorCode
                 
             else:
                 cartErrorCode = 0
+                return cartErrorCode
 
         except IndexError:
             print('Index Error Detected.')
