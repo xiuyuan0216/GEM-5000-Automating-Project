@@ -3,7 +3,7 @@
     "203":"Sample not detected",
     "204":"Sample not detected",
     "220":"Sample probe error",
-    "119":"Sample probe error",
+    "219":"Sample probe error",
     "221":"Sample probe error",
     "222":"Insufficient sample",
     "223":"Air detected within sample",
