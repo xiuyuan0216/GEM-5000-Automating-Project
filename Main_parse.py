@@ -7,7 +7,6 @@ def Main_parse(copyILPath):
     sensor_path =''
     event_log_path = ''
     for root, dirs, files in os.walk(copyILPath):
-        print(files)
         if 'SENSOR.csv' in files:
             sensor_path = os.path.join(root, 'SENSOR.csv')
         if 'EVENT_LOG.CSV' in files:
