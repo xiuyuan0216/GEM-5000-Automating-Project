@@ -111,7 +111,7 @@ def ParseCartridge():
 # Parses the event log file and turns it into a dataframe. Called by MainParse.
 def ParseEventLog():
     # Resolve() is to make sure we get the absolute path.
-    EventLogPath = str(CopyILDirectory.resolve()) + '\EVENT_LOG.csv'
+    EventLogPath = str(CopyILDirectory) + '\EVENT_LOG.csv'
     EventLogDF = pd.read_csv(EventLogPath)
 
     DataFrames["Event Log"] = EventLogDF
