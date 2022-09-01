@@ -13,8 +13,8 @@
     "LAC":"Lac",
     "GLU":"Glu",
     "PCO2":"pCO2",
-    "O2HB":"O2Hb",
-    "COHB":"COHb",
-    "METHB":"MetHb",
-    "HHB":"HHb"
+    "O2HB":"%O2Hb",
+    "COHB":"%COHb",
+    "METHB":"%MetHb",
+    "HHB":"%HHb"
 }

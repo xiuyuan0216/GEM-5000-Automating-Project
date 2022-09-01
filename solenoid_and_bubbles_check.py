@@ -108,7 +108,6 @@ def SolenoidBubblesDetect(path):
             print("No bubble detected on "+sen)
         print("--------------------------")
 
-path = "\\\sysdatprod1\\Cartridge Complaint Data\\GEM5000\\16010191\\000000000500121206\\000000000500121206_20210209_131129\\CHART_EC_SAMP.csv"
-SolenoidBubblesDetect(path)
+
 
         

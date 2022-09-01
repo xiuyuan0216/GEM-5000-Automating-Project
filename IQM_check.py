@@ -133,8 +133,4 @@ def IQM_check(sensor_file_path, event_log_path):
     plt.subplots_adjust(hspace=1, wspace=1)
     plt.show()
 
-            
-sensor_file_path = "\\\sysdatprod1\\Cartridge Complaint Data\\GEM5000\\16040283\\000000000500192713\\000000000500192713_20210904_064939\\SENSOR.csv"
-event_log_path = "\\\sysdatprod1\\Cartridge Complaint Data\\GEM5000\\16040283\\000000000500192713\\000000000500192713_20210904_064939\\EVENT_LOG.csv"
-IQM_check(sensor_file_path, event_log_path)
     
