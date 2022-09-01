@@ -13,8 +13,11 @@ def Error_code_extract(event_log_relavant):
                 # Grabs error code from event log message column
                 cartErrorCode = messageSplit[2]
                 cartErrorCode = cartErrorCode.rstrip(cartErrorCode[-1])
-                cartErrorCode = int(cartErrorCode)
-                return cartErrorCode
+                if cartErrorCode in error_message.keys():
+                    cartErrorCode = int(cartErrorCode)
+                    return cartErrorCode
+                else:
+                    cartErrorCode = 0
                 
             else:
                 cartErrorCode = 0

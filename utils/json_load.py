@@ -8,3 +8,9 @@ with open("./json/mapping.json",'r') as file2:
 
 with open("./json/slope_bound.json","r") as file3:
     slope_bound = json.load(file3)
+
+with open('./json/error_message.json','r') as file4:
+    error_message = json.load(file4)
+
+with open('./json/error_reason.json','r') as file5:
+    error_reason = json.load(file5)
