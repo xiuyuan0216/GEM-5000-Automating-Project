@@ -26,8 +26,8 @@ import matplotlib.pyplot as plt
 
 # CartDict holds the information that each check function needs to determine if a certain failure occurred.
 # This information is collected from the processed DataFrames of each .csv file.
-CartDict = {"General": dict(), "Leaks": dict(), "Peroxide Exposure": dict(), "Sticky Solenoid": dict(),
-            "Bubbles on Sensor": dict(), "Delamination": dict()}
+CartDict = {"General": dict(), "Leaks": dict(), "Peroxide Exposure": dict(), "StickySolenoid": dict(),
+            "Bubbles": dict(), "Delamination": dict(),"PSC-C":dict(),"IQM":dict()}
 
 # DataFrames holds the pandas dataframe version of the .csv files, where the key is the file name and the key is the
 # processed dataframe from the parsing functions.
