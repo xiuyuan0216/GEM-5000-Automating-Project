@@ -11,4 +11,6 @@ def Main_parse(copyILPath):
             sensor_path = os.path.join(root, 'SENSOR.csv')
         if 'EVENT_LOG.CSV' in files:
             event_log_path = os.path.join(root, 'EVENT_LOG.CSV')
-    return sensor_path, event_log_path
+        if 'cartridge.csv' in files:
+            cartridge_path = os.path.join(root, 'cartridge.csv')
+    return sensor_path, event_log_path, cartridge_path

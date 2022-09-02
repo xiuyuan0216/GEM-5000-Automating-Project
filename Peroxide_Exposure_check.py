@@ -26,12 +26,23 @@ def Peroxide_Exposure_Collect(DataFrames, CartDict):
 # 1. Glucose B drift greater than 6 or Glucose B drift is incalculable.
 # 2. Lactate B drift greater than 0.3 or Lactate B drift is incalculable.
 # 3. Creatine and Creatinine BmV less than or equal to -15.
-def PeroxideExposureCheck(Dataframes, CartDict):
+def Peroxide_Exposure_check(SensorDF):
+    BmV = SensorDF[SensorDF["'CalType'"] == "B"]
+    BmVDataFrame = BmV[["'Crea'", "'Cr'", "'Lac'", "'Glu'"]].reset_index(drop=True)
+    BmVDataFrame = BmVDataFrame.drop(labels=0, axis=0)
+
+    BDrift = SensorDF[SensorDF["'CalType'"] == "'B-DRIFT'"]
+    BDriftDataFrame = BDrift[["'Crea'", "'Cr'", "'Lac'", "'Glu'"]].reset_index(drop=True)
+
+    CartDict = dict()
+    CartDict["BmV"] = BmVDataFrame
+    CartDict["B Drift"] = BDriftDataFrame
+
     detected = False
     RollingQueue = deque()
 
-    BDF = CartDict["Peroxide Exposure"]["BmV"]
-    BDriftDF = CartDict["Peroxide Exposure"]["B Drift"]
+    BDF = CartDict["BmV"]
+    BDriftDF = CartDict["B Drift"]
 
     # Zip allows us to iterate through two dataframes at the same time.
     for (BmV, row1), (BDrift, row2) in zip(BDF.iterrows(), BDriftDF.iterrows()):

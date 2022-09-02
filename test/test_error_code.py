@@ -9,7 +9,7 @@ from Error_code_extract import *
 
 
 copyIL = Select_copyIL()
-sensor_path, event_log_path = Main_parse(copyIL)
+sensor_path, event_log_path, cartridge_path = Main_parse(copyIL)
 sensor_file, serialNo = Sensor_parse(sensor_path)
 event_log_relavant = Event_log_parse(event_log_path, serialNo)
 print(Error_code_extract(event_log_relavant))
