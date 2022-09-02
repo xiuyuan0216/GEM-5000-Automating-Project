@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 
-def CMCDebrisCheck(data):
+def CMC_Debris_check(data):
 
     # if the first row is not the header, search and set the correct header
 

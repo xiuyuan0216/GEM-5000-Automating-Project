@@ -3,18 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import seaborn as sns 
 
-def PSC_C_failure(path):
-    data = pd.read_csv(path)
-
-    
-    if data.columns[1] != "'CartAge'":
-        search = data.iloc[:,1].to_list()
-        index = 0 
-        while search[index]!="'CartAge'":
-            index+=1
-        data.columns = data.iloc[index,:]
-        data = data.iloc[index+1,:]
-
+def PSC_C_check(data):
 
     relavant_data = data[data["'CalType'"]=="I-C"]
     features = ["'CartAge'","'pO2'"]
@@ -64,5 +53,3 @@ def PSC_C_failure(path):
         print("No PSC-C Failure on pO2 sensor detected")
 
 
-path = "\\\sysdatprod1\\Cartridge Complaint Data\\GEM5000\\16010191\\000000000500121206\\000000000500121206_20210209_131129\\SENSOR.csv"
-PSC_C_failure(path)
