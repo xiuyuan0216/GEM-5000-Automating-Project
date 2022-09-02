@@ -1,7 +1,7 @@
 import numpy as np 
 import pandas as pd 
 import matplotlib.pyplot as plt 
-import datetime
+from datetime import datetime
 
 # Collects the needed information for the DelaminationCheck from the Dataframes.
 def DelaminationCollect(DataFrames, CartDict):
@@ -39,17 +39,47 @@ def DelaminationCollect(DataFrames, CartDict):
     CartDict["Delamination"]["Total Seconds"] = TotalSecondsSeries
 
 
-def DelaminationCheck(DataFrames, CartDict):
+def Delamination_check(SensorDF, cartridge_path):
+    CartridgeDF = pd.read_csv(cartridge_path, on_bad_lines='skip')
+    CartAge = int(CartridgeDF.iloc[31, 4])
+    CartDict = dict()
     detected = False
-    CartAge = CartDict["General"]["Age"]
 
+    BmV = SensorDF[SensorDF["'CalType'"] == "B"]
+    BmVDataFrame = BmV[["'pO2'"]].reset_index(drop=True)
+    BmVDataFrame = BmVDataFrame.drop(labels=0, axis=0)
+
+    AmV = SensorDF[SensorDF["'CalType'"] == "A"]
+    AmVDataFrame = AmV[["'pO2'"]].reset_index(drop=True)
+    AmVDataFrame = AmVDataFrame.drop(labels=0, axis=0)
+
+    TotalSeconds = SensorDF.iloc[:, 0]
+    TotalSecondsSeries = TotalSeconds.reset_index(drop=True)
+    TotalSecondsSeries = TotalSecondsSeries.drop(labels=0, axis=0)
+
+    TotalSecondsInitial = TotalSecondsSeries.iloc[0]
+    TotalSecondsInitial = TotalSecondsInitial[1:-5]
+    TotalSecondsInitial = datetime.strptime(TotalSecondsInitial, "%m/%d/%y %H:%M:%S")
+    TotalSecondsInitial = TotalSecondsInitial.timestamp()
     PriorTwentyPercent = 0
 
-    AmV = CartDict["Delamination"]["AmV"]
-    BmV = CartDict["Delamination"]["BmV"]
-    TotalSeconds = CartDict["Delamination"]["Total Seconds"]
-    LastFiveAmV = AmV.tail(5)
-    LastTenBmV = BmV.tail(10)
+    for index, row in TotalSecondsSeries.iteritems():
+        PreDate = row[:][1:-5]
+        Date = datetime.strptime(PreDate, "%m/%d/%y %H:%M:%S")
+        TotalSecs = Date.timestamp() - TotalSecondsInitial
+        TotalSecondsSeries = TotalSecondsSeries.replace(row, TotalSecs)
+
+    # print(TotalSecondsSeries)
+
+    CartDict["AmV"] = AmVDataFrame
+    CartDict["BmV"] = BmVDataFrame
+    CartDict["Total Seconds"] = TotalSecondsSeries
+
+    AmV = CartDict["AmV"]
+    BmV = CartDict["BmV"]
+    TotalSeconds = CartDict["Total Seconds"]
+    LastFiveAmV = pd.Series(AmV.tail(5))
+    LastTenBmV = pd.Series(BmV.tail(10))
 
     LastFiveAmVPrior = pd.DataFrame()
     LastTenBmVPrior = pd.DataFrame()
@@ -59,15 +89,19 @@ def DelaminationCheck(DataFrames, CartDict):
     else:
         PriorTwentyPercent = CartAge * 0.8
 
-    for (AmV, row1), (TotalSeconds, row2) in zip(AmV.iteritems(), TotalSeconds.iteritems()):
-        if len(LastFiveAmVPrior) != 5 and row2[:] >= PriorTwentyPercent:
-            LastFiveAmVPrior.append(row1[:])
+    for (AmV, row1), (TotalSeconds1, row2) in zip(AmVDataFrame.iteritems(), TotalSeconds.iteritems()):
+        if len(LastFiveAmVPrior) != 5 and row2 >= PriorTwentyPercent:
+            LastFiveAmVPrior.append(row1)
 
-    for (BmV, row1), (TotalSeconds, row2) in zip(BmV.iteritems(), TotalSeconds.iteritems()):
-        if len(LastTenBmVPrior) != 10 and row2[:] >= PriorTwentyPercent:
-            LastTenBmVPrior.append(row1[:])
+    for (BmV, row1), (TotalSeconds1, row2) in zip(BmVDataFrame.iteritems(), TotalSeconds.iteritems()):
+        if len(LastTenBmVPrior) != 10 and row2 >= PriorTwentyPercent:
+            LastTenBmVPrior.append(row1)
 
-    if LastFiveAmV.mean() >= LastFiveAmVPrior.mean() * 1.1 and LastTenBmV.mean() >= LastTenBmVPrior.mean * 1.1:
+    LastFiveAmV = LastFiveAmV.astype(np.float32)
+    LastFiveAmVPrior = LastFiveAmVPrior.iloc[:,0].astype(np.float32)
+    LastTenBmV = LastTenBmV.astype(np.float32)
+    LastFiveAmVPrior = LastTenBmVPrior.iloc[:,0].astype(np.float32)
+    if (LastFiveAmV.mean() >= LastFiveAmVPrior.mean() * 1.1) & (LastTenBmV.mean() >= LastTenBmVPrior.mean() * 1.1):
         detected = True
 
     if detected:
