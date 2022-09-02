@@ -2,8 +2,7 @@ import numpy as np
 import pandas as pd 
 
 
-def CMCDebrisCheck(path):
-    data = pd.read_csv(path)
+def CMCDebrisCheck(data):
 
     # if the first row is not the header, search and set the correct header
 
@@ -38,7 +37,3 @@ def CMCDebrisCheck(path):
         print("CMC Debris detected at "+str(CMC_debris_detect_time))
     else:
         print("CMC Debris not detected")
-
-
-path = "\\\sysdatprod1\\Cartridge Complaint Data\\GEM5000\\16020226\\000000000500112445\\000000000500112445_20210117_165952\\SENSOR.csv"
-CMCDebrisCheck(path)
