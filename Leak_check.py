@@ -43,10 +43,7 @@ def MedianSubtractClB(row, Medians):
 
 # Collects the needed information for the LeakCheck from the Dataframes. We are specifically looking for leaks that
 # result in air leakage into the fluidic system and messes with sensor measurements.
-def LeakCollect(DataFrames, CartDict, Medians):
-    SensorDF = DataFrames["Sensor"]
-    EventLogDF = DataFrames["Event Log"]
-    SerialNumber = CartDict["General"]["Serial Number"]
+def LeakCollect(SensorDF, CartDict):
 
     # Creates new condensed dataframe and stores into CartDict.
     ADrift = SensorDF[SensorDF["'CalType'"] == "'A-DRIFT'"]
@@ -55,18 +52,17 @@ def LeakCollect(DataFrames, CartDict, Medians):
     BDrift = SensorDF[SensorDF["'CalType'"] == "'B-DRIFT'"]
     BDriftDataFrame = BDrift[["'Na'", "'K'", "'Ca'", "'Cl'"]].reset_index(drop=True)
 
-    PO2Disabled = EventLogDF[EventLogDF['Message'] == "Sensor Disabled by iQM: "]
-    # PCSNDError = []
-
-    CartDict["Leaks"]["A Drift"] = ADriftDataFrame
-    CartDict["Leaks"]["B Drift"] = BDriftDataFrame
+    CartDict["A Drift"] = ADriftDataFrame
+    CartDict["B Drift"] = BDriftDataFrame
 
 
 # Leaks will usually fail as pO2 iQM disabled messages, and sometimes PCSND too.
 # Will usually present itself as significant spikes in B drift, and sometimes A drift too, on multiple sensors at the
 # same time. Looking to use Modified Z-Score as an adjustable metric to detect outliers.
 
-def LeakCheck(DataFrames, CartDict, Medians):
+def Leak_check(sensorDF):
+
+
     detected = False
     ModifiedZScoreLimit = 4
     # check out iqm sensor drift retry amounts

@@ -4,33 +4,10 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import seaborn as sns
 
-def IQM_check(sensor_file_path, event_log_path):
+from utils.json_load import *
 
-    with open("json/limit_bound.json",'r') as file1:
-        limit_bound = json.load(file1)
+def IQM_check(sensor_file, event_log, CartSerialNo):
 
-    with open("json/mapping.json",'r') as file2:
-        mapping = json.load(file2)
-
-    with open("json/slope_bound.json",'r') as file3:
-        slope_bound = json.load(file3)
-
-    sensor_file = pd.read_csv(sensor_file_path)
-
-    if sensor_file.columns[1] != "'CartAge'":
-        search = sensor_file.iloc[:,1].to_list()
-        index = 0 
-        while search[index]!="'CartAge'":
-            index+=1
-        sensor_file.columns = sensor_file.iloc[index,:]
-        sensor_file = sensor_file.iloc[index+1,:]
-
-    event_log = pd.read_csv(event_log_path)
-    event_log = event_log.dropna(subset=['Cartridge S/N'])
-    event_log['Cartridge S/N'] = event_log['Cartridge S/N'].astype(int)
-    extract_CartSerialNo = sensor_file[sensor_file["'CartAge'"]== "'CartSerialNo'"]
-    CartSerialNo = extract_CartSerialNo["'Hct'"]
-    CartSerialNo = int(CartSerialNo)
     event_log_relavant = event_log[event_log["Cartridge S/N"]==CartSerialNo]
 
 
@@ -54,6 +31,10 @@ def IQM_check(sensor_file_path, event_log_path):
         for value in sensor_failure[key]:
             if value in mapping.keys():
                 rows+=1
+
+    if rows == 0:
+        print("No IQM error detected")
+        return
 
     plot_num = 1
     

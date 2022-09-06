@@ -78,11 +78,10 @@ def Delamination_check(SensorDF, cartridge_path):
     AmV = CartDict["AmV"]
     BmV = CartDict["BmV"]
     TotalSeconds = CartDict["Total Seconds"]
-    LastFiveAmV = pd.Series(AmV.tail(5))
-    LastTenBmV = pd.Series(BmV.tail(10))
-
-    LastFiveAmVPrior = pd.DataFrame()
+    LastFiveAmV = AmV.iloc[AmV.shape[0]-5:AmV.shape[0], :]
+    LastTenBmV = BmV.iloc[BmV.shape[0]-10:BmV.shape[0], :]
     LastTenBmVPrior = pd.DataFrame()
+    LastFiveAmVPrior = pd.DataFrame()
 
     if CartAge >= 500 * 60 * 60:
         PriorTwentyPercent = 400 * 60 * 60
@@ -96,12 +95,31 @@ def Delamination_check(SensorDF, cartridge_path):
     for (BmV, row1), (TotalSeconds1, row2) in zip(BmVDataFrame.iteritems(), TotalSeconds.iteritems()):
         if len(LastTenBmVPrior) != 10 and row2 >= PriorTwentyPercent:
             LastTenBmVPrior.append(row1)
-
+    LastFiveAmV = LastFiveAmV.reset_index()
+    LastTenBmV = LastTenBmV.reset_index()
     LastFiveAmV = LastFiveAmV.astype(np.float32)
-    LastFiveAmVPrior = LastFiveAmVPrior.iloc[:,0].astype(np.float32)
     LastTenBmV = LastTenBmV.astype(np.float32)
-    LastFiveAmVPrior = LastTenBmVPrior.iloc[:,0].astype(np.float32)
-    if (LastFiveAmV.mean() >= LastFiveAmVPrior.mean() * 1.1) & (LastTenBmV.mean() >= LastTenBmVPrior.mean() * 1.1):
+    LastFiveAmVPrior = LastFiveAmVPrior.astype(np.float32)
+    LastTenBmVPrior = LastTenBmVPrior.astype(np.float32)
+
+    LastFiveAmV = LastFiveAmV.iloc[:,1]
+    LastTenBmV = LastTenBmV.iloc[:,1]
+    LastFiveAmV_mean = LastFiveAmV.mean()
+    LastTenBmV_mean = LastTenBmV.mean()
+
+    if LastFiveAmVPrior.shape[0] == 0:
+        LastFiveAmVPrior_mean = 0
+    else:
+        LastFiveAmVPrior = LastFiveAmVPrior.iloc[:,1]
+        LastFiveAmVPrior_mean = LastFiveAmVPrior.mean()
+
+    if LastTenBmVPrior.shape[0] == 0:
+        LastTenBmVPrior_mean = 0
+    else:
+        LastTenBmVPrior = LastTenBmVPrior.iloc[:,1]
+        LastTenBmVPrior_mean = LastFiveAmVPrior.mean()
+
+    if (LastFiveAmV_mean > LastFiveAmVPrior_mean * 1.1) & (LastTenBmV_mean > LastTenBmVPrior_mean * 1.1):
         detected = True
 
     if detected:
