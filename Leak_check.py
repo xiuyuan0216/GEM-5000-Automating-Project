@@ -9,35 +9,35 @@ def ModifiedZScore(ZScore, Median, MAD):
     return (float(ZScore) - Median) * 0.675 / MAD
 
 
-def MedianSubtractNaA(row, Medians):
+def MedianSubtractNaA(row):
     return float(row[:]) - Medians["Na A"]
 
 
-def MedianSubtractKA(row, Medians):
+def MedianSubtractKA(row):
     return float(row[:]) - Medians["K A"]
 
 
-def MedianSubtractCaA(row, Medians):
+def MedianSubtractCaA(row):
     return float(row[:]) - Medians["Ca A"]
 
 
-def MedianSubtractClA(row, Medians):
+def MedianSubtractClA(row):
     return float(row[:]) - Medians["Cl A"]
 
 
-def MedianSubtractNaB(row, Medians):
+def MedianSubtractNaB(row):
     return float(row[:]) - Medians["Na B"]
 
 
-def MedianSubtractKB(row, Medians):
+def MedianSubtractKB(row):
     return float(row[:]) - Medians["K B"]
 
 
-def MedianSubtractCaB(row, Medians):
+def MedianSubtractCaB(row):
     return float(row[:]) - Medians["Ca B"]
 
 
-def MedianSubtractClB(row, Medians):
+def MedianSubtractClB(row):
     return float(row[:]) - Medians["Cl B"]
 
 
@@ -60,8 +60,11 @@ def LeakCollect(SensorDF, CartDict):
 # Will usually present itself as significant spikes in B drift, and sometimes A drift too, on multiple sensors at the
 # same time. Looking to use Modified Z-Score as an adjustable metric to detect outliers.
 
-def Leak_check(sensorDF):
-
+def Leak_check(SensorDF):
+    CartDict = dict()
+    global Medians
+    Medians = dict()
+    LeakCollect(SensorDF, CartDict)
 
     detected = False
     ModifiedZScoreLimit = 4
@@ -75,8 +78,8 @@ def Leak_check(sensorDF):
     RequirePCSNDDisabled = False
     ConstantMultiplier = 0.675
 
-    ADriftDF = CartDict["Leaks"]["A Drift"]
-    BDriftDF = CartDict["Leaks"]["B Drift"]
+    ADriftDF = CartDict["A Drift"]
+    BDriftDF = CartDict["B Drift"]
 
     # could use a "for col in df:" type of thing
     Medians["Na A"] = ADriftDF.loc[:, "'Na'"].median()
@@ -88,6 +91,7 @@ def Leak_check(sensorDF):
     Medians["K B"] = BDriftDF.loc[:, "'K'"].median()
     Medians["Ca B"] = BDriftDF.loc[:, "'Ca'"].median()
     Medians["Cl B"] = BDriftDF.loc[:, "'Cl'"].median()
+ 
 
     NaMADA = np.abs(ADriftDF.loc[:, ["'Na'"]].apply(MedianSubtractNaA, axis=1)).median()
     KMADA = np.abs(ADriftDF.loc[:, ["'K'"]].apply(MedianSubtractKA, axis=1)).median()
