@@ -38,7 +38,7 @@ def IQM_check(sensor_file, event_log, CartSerialNo):
 
     plot_num = 1
     
-    plt.figure(figsize=(100,80))
+    plt.figure(figsize=(10*columns,8*rows))
     for type in sensor_failure.keys():
         for sensor in sensor_failure[type]:
             if sensor not in mapping.keys():
@@ -50,7 +50,6 @@ def IQM_check(sensor_file, event_log, CartSerialNo):
             sensor_file_meas = sensor_file[sensor_file["'CalType'"]==meas]
             sensor_name = mapping[sensor]
             sensor_real = "'"+sensor_name+"'"
-            print(sensor_file_relavant.shape)
             sensor_file_relavant = sensor_file_relavant.dropna(subset=[sensor_real])
             errs = sensor_file[sensor_file["'CalType'"]=="'ERRS'"]
 

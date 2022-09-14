@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns 
 
 def Solenoid_and_bubbles_check(data):
-    print(data.head())
     relavant_data = data[data["'CalType'"]=='S']
     sensors_list = ["'Na'","'K'","'Ca'","'BUN'","'Cl'","'pO2'","'pH'","'HCO3'","'Crea'","'Cr'","'Lac'","'Glu'"]
     for sen in sensors_list:

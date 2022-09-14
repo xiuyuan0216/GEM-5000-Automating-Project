@@ -1,5 +1,22 @@
+from sre_parse import State
 import tkinter
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, callback, State
+
+from Main_parse import *
+from Select_copyIL import *
+from Sensor_parse import *
+from Main_parse import *
+from Event_log_parse import *
+from CMC_Debris_check import *
+from Delamination_check import *
+from Error_code_extract import *
+from Error_message_extract import *
+from Error_reason_extract import *
+from IQM_check import *
+from Leak_check import *
+from Peroxide_Exposure_check import *
+from PSC_C_check import *
+from Solenoid_and_bubbles_check import *
 
 app = Dash(__name__)
 
@@ -40,8 +57,33 @@ app.layout = html.Div(style={"background-image":'url("/assets/Background.PNG")',
                                                   'text-align':'left',
                                                   }, placeholder="CopyIL Path")]),
     html.Div(children=[html.Button('Submit', id='submit_button',n_clicks=0, style={"height":"50px", "width":"120px", "background-color":"#FFA500", "color":'#FFFFFF', "border-radius":"10px", "font-size":'20px'})], style={"height":"100px", "padding-top":'30px', 'padding-left':'300px'}),
-    html.Div(id="path_box", style={'height':'1000px','width':"100%"})
+    html.Div(id="path_box", style={'height':'100px','width':"50%", 'font-size':'20px', 'border':'2px solid black',"border-radius":'10px', 'padding-left':'10px', "background":"0#FFFFFF"}),
+    html.Hr(style={'border-color':'#FFA500',
+                   'border-width':'1px'}),
+    html.Div(id='report', style={'height':"1000px",'width':"100%", 'background':'0#FFFFFF', "border":"2px solid black", 'border-radius':'10px'})
 ])
+
+
+@app.callback(
+    Output('path_box', 'children'),
+    Input('submit_button','n_clicks'),
+    State('input_box', 'value')
+)
+def update_output(n_clicks, value):
+    if n_clicks>0:
+        print(value)
+        Main_parse(value)
+        sensor_path, event_log_path, cartridge = Main_parse(value)
+        sensor_file, SerialNo = Sensor_parse(sensor_path)
+        event_log_relavant = Event_log_parse(event_log_path, SerialNo)
+        error_code = Error_code_extract(event_log_relavant)
+        message = Error_message_extract(error_code)
+        reason = Error_reason_extract(error_code)
+        print(error_code)
+
+        return f"The folder you selected: \n {value}"
+    else:
+        return ""
 
 
 if __name__ == "__main__":
