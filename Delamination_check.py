@@ -123,6 +123,6 @@ def Delamination_check(SensorDF, cartridge_path):
         detected = True
 
     if detected:
-        print("Delamination Signature Detected.")
+        return "Delamination Signature Detected."
     else:
-        print("Delamination Not Detected.")
+        return "Delamination Not Detected."

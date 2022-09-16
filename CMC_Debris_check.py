@@ -34,6 +34,6 @@ def CMC_Debris_check(data):
             break
 
     if CMC_debris == True:
-        print("CMC Debris detected at "+str(CMC_debris_detect_time))
+        return "CMC Debris detected at "+str(CMC_debris_detect_time)
     else:
-        print("CMC Debris not detected")
+        return "CMC Debris not detected"

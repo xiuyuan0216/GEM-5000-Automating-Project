@@ -48,8 +48,8 @@ def PSC_C_check(data):
             break
 
     if failure == True:
-        print("PSC-C Failure on pO2 detected at "+str(detect_time))
+        return "PSC-C Failure on pO2 detected at "+str(detect_time)
     else:
-        print("No PSC-C Failure on pO2 sensor detected")
+        return "No PSC-C Failure on pO2 sensor detected"
 
 

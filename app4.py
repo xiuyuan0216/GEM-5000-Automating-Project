@@ -1,6 +1,6 @@
-from sre_parse import State
+
 import tkinter
-from dash import Dash, html, dcc, Input, Output, callback, State
+from dash import Dash, html, dcc, Input, Output, callback, State, dash_table
 from plotly.tools import mpl_to_plotly
 import io
 import base64
@@ -48,7 +48,8 @@ app.layout = html.Div(style={"background-image":'url("/assets/Background.PNG")',
                                                     'height':'30px',
                                                     'padding-top':'10px',
                                                     'padding-left':'10px',
-                                                    "font-size":'x-large'}),
+                                                    "font-size":'x-large',
+                                                    "font-family":"Arial"}),
     html.Div(style={'padding-left':'10px'},children=[dcc.Input(id="input_box", type='text', style={'height':'100px',
                                                   "width":'50%',
                                                   'border-size':'1px',
@@ -58,12 +59,13 @@ app.layout = html.Div(style={"background-image":'url("/assets/Background.PNG")',
                                                   'font-size':'20px',
                                                   "padding-top":'10px',
                                                   'text-align':'left',
+                                                  "font-family":"Arial"
                                                   }, placeholder="CopyIL Path")]),
     html.Div(children=[html.Button('Submit', id='submit_button',n_clicks=0, style={"height":"50px", "width":"120px", "background-color":"#FFA500", "color":'#FFFFFF', "border-radius":"10px", "font-size":'20px'})], style={"height":"100px", "padding-top":'30px', 'padding-left':'300px'}),
     html.Div(id="path_box", style={'height':'100px','width':"50%", 'font-size':'20px', 'border':'2px solid black',"border-radius":'10px', 'padding-left':'10px', "background":"0#FFFFFF", 'font-family':'Arial'}),
     html.Hr(style={'border-color':'#FFA500',
                    'border-width':'1px'}),
-    html.Div(id='report', style={'height':"3000px",'width':"100%", 'background':'0#FFFFFF', "border":"2px solid black", 'border-radius':'10px'}, children=[
+    html.Div(id='report', style={'height':"2000px",'width':"100%", 'background':'0#FFFFFF', "border":"2px solid black", 'border-radius':'10px'}, children=[
         html.Div(children="Report for your selected CopyIL", style={'height':'30px','width':'100%', 'font-size':'30px','text-align':'center', 'font-family':'Arial'}),
         html.Hr(),
         html.Div(id='error_part', children=[
@@ -83,7 +85,17 @@ app.layout = html.Div(style={"background-image":'url("/assets/Background.PNG")',
         ]),
         html.Hr(id='line3'),
         html.Div(id='peroxide', style={"font-family":"Arial", "padding-left":"10px"}),
-        html.Hr(id='line4')
+        html.Hr(id='line4'),
+        html.Div(id="solenoid_bubble", children=[
+            dash_table.DataTable(id="solenoid_and_bubble",style_cell={"font-family":"Arial"})
+        ]),
+        html.Hr(id="line5"),
+        html.Div(id='PSC-C', style={"padding-left":"10px", "font-family":"Arial"}),
+        html.Hr(id="line6"),
+        html.Div(id="Delamination", style={"padding-left":"10px", "font-family":"Arial"}),
+        html.Hr(id="line7"),
+        html.Div(id="CMC_debris", style={"padding-left":"10px", "font-family":"Arial"}),
+        html.Hr(id='line8')
     ])
 ])
 
@@ -103,6 +115,14 @@ app.layout = html.Div(style={"background-image":'url("/assets/Background.PNG")',
     Output('line3', 'style'),
     Output('peroxide', 'children'),
     Output('line4', 'style'),
+    Output('solenoid_and_bubble', 'data'),
+    Output('line5', 'style'),
+    Output("PSC-C", 'children'),
+    Output("line6", "style"),
+    Output("Delamination", "children"),
+    Output("line7", "style"),
+    Output("CMC_debris", "children"),
+    Output("line8", "style"),
     Input('submit_button','n_clicks'),
     State('input_box', 'value')
 )
@@ -118,6 +138,11 @@ def update_output(n_clicks, value):
         fig, columns, information = IQM_check(sensor_file, event_log_relavant, SerialNo)
         leak, sensor_leak_failures = Leak_check(sensor_file)
         peroxide = Peroxide_Exposure_check(sensor_file)
+        solenoid_and_bubbles_dict = pd.DataFrame(Solenoid_and_bubbles_check(sensor_file)).to_dict('records')
+        PSC_information = PSC_C_check(sensor_file)
+        delamination = Delamination_check(sensor_file, cartridge)
+        CMC_debris = CMC_Debris_check(sensor_file)
+
         leak_detected = "Leak dectection on sensors: "+leak
         outlier_points = "Total number of outlier points in leak check: "+str(sensor_leak_failures)
         peroxide_failure = "Peroxide exposure check on sensors: "+peroxide
@@ -126,7 +151,10 @@ def update_output(n_clicks, value):
             return f"The folder you selected: \n {value}", f"Error code: {error_code}", f"Error message: {message}", \
                 f"Error reason: {reason}",{"border-top":'1px', "border-color":'black'}, None, None, fig,\
                 {"border-top":'1px', "border-color":'black'}, leak_detected, outlier_points,\
-                {"border-top":'1px', "border-color":'black'}, peroxide_failure, {"border-top":'1px', "border-color":'black'}
+                {"border-top":'1px', "border-color":'black'}, peroxide_failure, {"border-top":'1px', "border-color":'black'}, solenoid_and_bubbles_dict,\
+                {"border-top":'1px', "border-color":'black'}, PSC_information, {"border-top":'1px', "border-color":'black'}, \
+                "Delamination detection: "+delamination, {"border-top":'1px', "border-color":'black'}, "CMC Debris detection: "+CMC_debris, \
+                {"border-top":'1px', "border-color":'black'}
         else:
             buf = io.BytesIO()
             fig.savefig(buf, format='png')
@@ -162,10 +190,15 @@ def update_output(n_clicks, value):
             return f"The folder you selected: \n {value}", f"Error code: {error_code}", f"Error message: {message}", \
                 f"Error reason: {reason}",{"border-top":'1px', "border-color":'black'}, "data:image/png;base64,{}".format(data),\
                 {"height":fig_height, "width":'100%'}, IQM_P, {"border-top":'1px', "border-color":'black'}, leak_detected, outlier_points,\
-                {"border-top":'1px', "border-color":'black'}, peroxide_failure, {"border-top":'1px', "border-color":'black'}
+                {"border-top":'1px', "border-color":'black'}, peroxide_failure, {"border-top":'1px', "border-color":'black'}, solenoid_and_bubbles_dict, \
+                {"border-top":'1px', "border-color":'black'}, "PSC-C detection: "+PSC_information, {"border-top":'1px', "border-color":'black'},\
+                "Delamination detection: "+delamination, {"border-top":'1px', "border-color":'black'}, "CMC Debris detection: "+CMC_debris, \
+                {"border-top":'1px', "border-color":'black'}
     else:
         return "","","","",{'border-top':'1px', 'border-color':'transparent'}, None, None, None,{'border-top':'1px', 'border-color':'transparent'},\
-            "","", {"border-top":'1px', "border-color":'transparent'}, "", {"border-top":'1px', "border-color":'transparent'}
+            "","", {"border-top":'1px', "border-color":'transparent'}, "", {"border-top":'1px', "border-color":'transparent'}, None, \
+            {"border-top":'1px', "border-color":'transparent'}, "", {"border-top":'1px', "border-color":'transparent'}, "",\
+            {"border-top":'1px', "border-color":'transparent'}, "", {"border-top":'1px', "border-color":'transparent'}
 
 
 if __name__ == "__main__":
