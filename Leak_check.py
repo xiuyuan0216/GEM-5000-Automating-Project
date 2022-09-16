@@ -146,8 +146,6 @@ def Leak_check(SensorDF):
     # Artificial Conditions, for now...
     if SensorFailures >= SensorsUntilFailure:
         detected = True
-        print("Leak Signature Detected.")
+        return "Leak Signature Detected.", SensorFailures
     else:
-        print("Leak Not Detected.")
-
-    return detected
+        return "Leak Not Detected.", SensorFailures

@@ -68,8 +68,6 @@ def Peroxide_Exposure_check(SensorDF):
             detected = True
 
     if detected:
-        print("Peroxide Exposure Signature Detected.")
+        return "Peroxide Exposure Signature Detected."
     else:
-        print("Peroxide Exposure Not Detected.")
-
-    return detected
+        return "Peroxide Exposure Not Detected."

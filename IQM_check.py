@@ -3,6 +3,9 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt 
 import seaborn as sns
+import plotly.graph_objects as  go
+from plotly.subplots import make_subplots
+from plotly.tools import mpl_to_plotly
 
 from utils.json_load import *
 
@@ -34,11 +37,12 @@ def IQM_check(sensor_file, event_log, CartSerialNo):
 
     if rows == 0:
         print("No IQM error detected")
-        return
+        return "No IQM error detected", 0, []
 
     plot_num = 1
     
-    plt.figure(figsize=(10*columns,8*rows))
+    information = []
+    fig = plt.figure(figsize=(10*columns,8*rows))
     for type in sensor_failure.keys():
         for sensor in sensor_failure[type]:
             if sensor not in mapping.keys():
@@ -72,6 +76,15 @@ def IQM_check(sensor_file, event_log, CartSerialNo):
             sensor_meas.reset_index(drop=True, inplace=True)
             sensor_meas = sensor_meas.astype(np.float32)
 
+            sensor_info = dict()
+            sensor_info['Sensor'] = sensor_name
+            sensor_info['Calibration Type'] = caltype 
+            sensor_info['Disabled time'] = timestamp 
+            sensor_info['Disabled age'] = timestamp 
+            sensor_info['max'] = sensor_data.max()
+            sensor_info['min'] = sensor_data.min()
+            information.append(sensor_info)
+
             print("Sensor "+sensor_name+" Failed at Calibration Type "+caltype)
             print("Sensor Disabled time:"+timestamp)
             print("Sensor Disabled age:",cart_age,"hrs")
@@ -89,9 +102,11 @@ def IQM_check(sensor_file, event_log, CartSerialNo):
                 lower_limit = limit_bound[mapping_word][0]
 
     
+            
             plt.subplot(rows,columns,plot_num)
+            # fig1 = plt.figure(figsize=(10,8))
             plot_num+=1
-            sns.lineplot(x=age, y=sensor_data, label='Sensor Drift Data')
+            plt.plot(age, sensor_data, label='Sensor Drift Data')
             plt.axhline(upper_limit, c='red',label="Limit bound")
             plt.axhline(lower_limit, c='red')
             cart_age = np.float32(cart_age)
@@ -103,14 +118,13 @@ def IQM_check(sensor_file, event_log, CartSerialNo):
 
             plt.subplot(rows, columns, plot_num)
             plot_num+=1
-            sns.lineplot(x=age, y=sensor_meas, label='Sensor Meas Data')
+            plt.plot(age, sensor_meas, label='Sensor Meas Data')
             plt.axvline(cart_age, c='green', label='Sensor Disabled')
             #plt.text(cart_age, sensor_data.max(),'Sensor Disabled')
             #plt.legend(loc=1)
             title2 = "Sensor "+sensor_name+" "+meas
             plt.title(title2)
 
-    plt.subplots_adjust(hspace=1, wspace=1)
-    plt.show()
+    return fig, columns, information
 
     
