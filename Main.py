@@ -20,7 +20,7 @@ from Solenoid_and_bubbles_check import *
 
 
 copyIL = Select_copyIL()
-sensor_path, event_log_path, cartridge = Main_parse(copyIL)
+sensor_path, event_log_path, cartridge, chart_ec_samp = Main_parse(copyIL)
 sensor_file, SerialNo = Sensor_parse(sensor_path)
 event_log_relavant = Event_log_parse(event_log_path, SerialNo)
 error_code = Error_code_extract(event_log_relavant)
@@ -41,7 +41,7 @@ print("-------------------------------")
 Peroxide_Exposure_check(sensor_file)
 print("-------------------------------")
 
-Solenoid_and_bubbles_check(sensor_file)
+Solenoid_and_bubbles_check(chart_ec_samp)
 print("-------------------------------")
 
 PSC_C_check(sensor_file)

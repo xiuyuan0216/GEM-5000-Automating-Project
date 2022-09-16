@@ -129,7 +129,7 @@ app.layout = html.Div(style={"background-image":'url("/assets/Background.PNG")',
 def update_output(n_clicks, value):
     if n_clicks>0:
         Main_parse(value)
-        sensor_path, event_log_path, cartridge = Main_parse(value)
+        sensor_path, event_log_path, cartridge, chart_ec_samp = Main_parse(value)
         sensor_file, SerialNo = Sensor_parse(sensor_path)
         event_log_relavant = Event_log_parse(event_log_path, SerialNo)
         error_code = Error_code_extract(event_log_relavant)
@@ -138,7 +138,7 @@ def update_output(n_clicks, value):
         fig, columns, information = IQM_check(sensor_file, event_log_relavant, SerialNo)
         leak, sensor_leak_failures = Leak_check(sensor_file)
         peroxide = Peroxide_Exposure_check(sensor_file)
-        solenoid_and_bubbles_dict = pd.DataFrame(Solenoid_and_bubbles_check(sensor_file)).to_dict('records')
+        solenoid_and_bubbles_dict = pd.DataFrame(Solenoid_and_bubbles_check(chart_ec_samp)).to_dict('records')
         PSC_information = PSC_C_check(sensor_file)
         delamination = Delamination_check(sensor_file, cartridge)
         CMC_debris = CMC_Debris_check(sensor_file)

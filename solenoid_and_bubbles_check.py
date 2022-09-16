@@ -3,20 +3,21 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import seaborn as sns 
 
-def Solenoid_and_bubbles_check(data):
+def Solenoid_and_bubbles_check(path):
+    data = pd.read_csv(path)
     relavant_data = data[data["'CalType'"]=='S']
     sensors_list = ["'Na'","'K'","'Ca'","'BUN'","'Cl'","'pO2'","'pH'","'HCO3'","'Crea'","'Cr'","'Lac'","'Glu'"]
     solenoid_and_bubbles_dict = dict()
     solenoid_and_bubbles_dict["Sensors"] = []
     solenoid_and_bubbles_dict["Total number of curves"] = []
-    solenoid_and_bubbles_dict["Sticky Solenoid detected"] = []
+    solenoid_and_bubbles_dict["Sticky Solenoid detected at"] = []
     solenoid_and_bubbles_dict["Total number of bubbles detected"] = []
     solenoid_and_bubbles_dict["Bubbles percentage"] = []
 
     for sen in sensors_list:
         solenoid_and_bubbles_dict["Sensors"].append(sen)
         features = ["'CartAge'",sen]
-        table = relavant_data[features].dropna()
+        table = relavant_data[features].dropna(subset=features)
         CartAge = table["'CartAge'"]
         sensor = table[sen]
             
@@ -103,10 +104,10 @@ def Solenoid_and_bubbles_check(data):
                         solenoid = True
         
         if solenoid == True:
-            solenoid_and_bubbles_dict["Sticky Solenoid detected"].append(str(solenoid_detect_time))
+            solenoid_and_bubbles_dict["Sticky Solenoid detected at"].append(str(solenoid_detect_time))
             print("Sticky Solenoid detected on "+sen+" at "+str(solenoid_detect_time))
         else:
-            solenoid_and_bubbles_dict["Sticky Solenoid detected"].append("No")
+            solenoid_and_bubbles_dict["Sticky Solenoid detected at"].append("No")
             print("No sticky solenoid detected on "+sen)
         if bubbles == True:
             solenoid_and_bubbles_dict["Total number of curves"].append(str(curve_num))
