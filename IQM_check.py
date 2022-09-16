@@ -80,7 +80,7 @@ def IQM_check(sensor_file, event_log, CartSerialNo):
             sensor_info['Sensor'] = sensor_name
             sensor_info['Calibration Type'] = caltype 
             sensor_info['Disabled time'] = timestamp 
-            sensor_info['Disabled age'] = timestamp 
+            sensor_info['Disabled age'] = cart_age
             sensor_info['max'] = sensor_data.max()
             sensor_info['min'] = sensor_data.min()
             information.append(sensor_info)

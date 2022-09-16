@@ -166,7 +166,7 @@ def update_output(n_clicks, value):
                 line_break1 = html.Br()
                 IQM2="Sensor Disabled time:"+i['Disabled time']
                 line_break2 = html.Br()
-                IQM3="Sensor Disabled age:"+i['Disabled age']+'hrs'
+                IQM3="Sensor Disabled age:"+i['Disabled age']+' hrs'
                 line_break3 = html.Br()
                 IQM4="Sensor data maximum value "+str(i['max'])
                 line_break4 = html.Br()
