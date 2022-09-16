@@ -2,14 +2,7 @@ import sys
 sys.path.append('.')
 
 
-
-
-
-
-
-
-
-
+# four CopyIL data for demo
 
 "\\sysdatprod1\Cartridge Complaint Data\GEM5000\16010206\000000000500053584"
 

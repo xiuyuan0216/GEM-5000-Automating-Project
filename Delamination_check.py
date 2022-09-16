@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 # Collects the needed information for the DelaminationCheck from the Dataframes.
+# has been integrated into Delamination_check. This function is not used
 def DelaminationCollect(DataFrames, CartDict):
     SensorDF = DataFrames["Sensor"]
 
@@ -39,6 +40,9 @@ def DelaminationCollect(DataFrames, CartDict):
     CartDict["Delamination"]["Total Seconds"] = TotalSecondsSeries
 
 
+# check delamination error
+# parameter: sensorDF: sensor dataframe, cartridge_path: path of cartridge.csv
+# return: delamination message
 def Delamination_check(SensorDF, cartridge_path):
     CartridgeDF = pd.read_csv(cartridge_path, on_bad_lines='skip')
     CartAge = int(CartridgeDF.iloc[31, 4])

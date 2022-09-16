@@ -1,10 +1,11 @@
 import numpy as np 
 import pandas as pd 
 
-
+# check CMC debris error 
+# parameter: data, sensor dataframe
+# return: CMC debris message
 def CMC_Debris_check(data):
 
-    # if the first row is not the header, search and set the correct header
 
     # select A-COOx in CalType, extract cartAge and tHbMeas from the table
     relavant_data = data[data["'CalType'"]=='A-COOx']

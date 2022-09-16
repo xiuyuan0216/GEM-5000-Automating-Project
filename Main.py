@@ -17,7 +17,7 @@ from Peroxide_Exposure_check import *
 from PSC_C_check import *
 from Solenoid_and_bubbles_check import *
 
-
+# general approach. After developing the web application, running this file will output nothing in the terminal
 
 copyIL = Select_copyIL()
 sensor_path, event_log_path, cartridge, chart_ec_samp = Main_parse(copyIL)

@@ -3,7 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 from utils.json_load import *
 
-
+# extract error code from event log dataframe of the specific cartridge
+# parameter: event log dataframe of the specific cartridge
+# return: error code
 def Error_code_extract(event_log_relavant):
     for index, row in event_log_relavant.iterrows():
         try:

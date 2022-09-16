@@ -1,16 +1,4 @@
-# Werfen Summer Internship 2022: GEM 5000 Automation Project
-# Developer: Kevin Truong, Raymond Li, Ronnie Yuan
-# Purpose: Takes a CopyIL directory as an input and returns information about the cartridge failure to the user.
-
-# Data Pipeline [UPDATED 8/10/22]
-# -----
-# User inputs CopyIL File
-# Convert cartridge, sensor, and event log .csv files to pandas dataframe and store in DataFrames
-# Collect the information needed for each failure check into the CartDict as a modified dataframe from the DataFrames
-# Run each of the failure checks on the associated CartDict entries
-# Parse through general CartDict to find possible reason for failure
-# Connect to dashboard (Plotly-Dash, pymongo)
-# Return reason for failure to user through the dashboard
+# all the functions in this file have been moved to other files. This python file is not used
 
 import pandas as pd
 import json

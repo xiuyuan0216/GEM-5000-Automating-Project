@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import os 
 
+# go through the copyIL path, find path of sensor, event_log, cartridge, chart_ec_samp file
 def Main_parse(copyILPath):
     sensor_path =''
     event_log_path = ''

@@ -1,5 +1,7 @@
 import json 
 
+# load json files in json folder into python dictionaries
+
 with open("./json/limit_bound.json",'r') as file1:
     limit_bound = json.load(file1)
 
